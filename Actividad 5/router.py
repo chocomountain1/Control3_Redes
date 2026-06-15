@@ -23,6 +23,10 @@ while True:
     # Aquí se debería revisar el mensaje recibido, parsearlo, revisar las rutas y enviar el mensaje al siguiente salto si es necesario.
     parsed_message = parse_packet(message)
 
+    if int.from_bytes(parsed_message["ttl"], "big") <= 0:
+        print(f"Se recibió paquete {parsed_message} con TTL 0")
+        continue
+
     destination_address = (".".join(map(str, parsed_message["destination_ip"])),int.from_bytes(parsed_message["destination_port"], "big"))
     
     #Si el mensaje tiene como destino este router, lo imprimimos y no lo reenviamos a ningún otro router
@@ -35,6 +39,8 @@ while True:
 
     if next_hop is not None:
         next_hop_ip, next_hop_port = next_hop
+        #Antes de crear el nuevo paquete, debemos decrementar el ttl del mensaje en 1
+        parsed_message["ttl"] = (int.from_bytes(parsed_message["ttl"], "big") - 1).to_bytes(1, "big")
         new_packet = create_packet(parsed_message)
         dgram_socket.sendto(new_packet, (next_hop_ip, next_hop_port))
         print(f"Redirigiendo paquete {new_packet} con destino final {destination_address} hacia {next_hop}")
