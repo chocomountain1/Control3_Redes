@@ -2,6 +2,7 @@ import sys
 from funciones_aux import parse_packet, create_packet
 from checkear_rutas import check_routes
 from fragment_IP_packet import fragment_IP_packet
+from reassemble_IP_packet import reassemble_IP_packet
 router_ip = sys.argv[1]
 router_puerto = int(sys.argv[2])
 router_rutas = sys.argv[3]
@@ -15,6 +16,11 @@ import socket
 # Socket no orientado a conexión
 dgram_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dgram_socket.bind((router_ip, router_puerto))
+
+
+#Diccionario que guarda los mensajes recibidos por este router
+fragmentos = {}
+
 
 # Recibir mensajes. Este método nos entrega el mensaje junto a la dirección de origen del mensaje, además que escucha de forma bloqueante por defecto
 while True:
@@ -33,6 +39,16 @@ while True:
     #Si el mensaje tiene como destino este router, lo imprimimos y no lo reenviamos a ningún otro router
     if destination_address[0] == router_ip and destination_address[1] == router_puerto:
         print("Mensaje recibido con destino a este router: {}".format(parsed_message["message"]))
+        id = int.from_bytes(parsed_message["id"], "big")
+        if id not in fragmentos:
+            fragmentos[id] = []
+        fragmentos[id].append(fragment)
+
+        packet = reassemble_IP_packet(fragmentos[id])
+
+        if packet is not None:
+            print(parse_packet(packet)["message"])
+            del fragmentos[id]
         continue
     
     #Si no entonces chequeamos las rutas para ver si hay una ruta que coincida con la dirección de destino del mensaje
