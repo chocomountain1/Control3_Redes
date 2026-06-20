@@ -32,10 +32,11 @@ def fragment_IP_packet(IP_packet: bytes, mtu: int):
         "flag": new_flag,
         "message": trozo
         }
-        
+
         #Finalmente creamos un paquete de tipo ip con la funcion auxiliar
         fragment = create_packet(packet_info)
         #Lo añadimos en la lista de fragmentos
         fragments.append(fragment)
+    print(fragments)
     return fragments
         

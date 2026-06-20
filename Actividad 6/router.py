@@ -1,6 +1,7 @@
 import sys
 from funciones_aux import parse_packet, create_packet
 from checkear_rutas import check_routes
+from fragment_IP_packet import fragment_IP_packet
 router_ip = sys.argv[1]
 router_puerto = int(sys.argv[2])
 router_rutas = sys.argv[3]
@@ -42,8 +43,13 @@ while True:
         #Antes de crear el nuevo paquete, debemos decrementar el ttl del mensaje en 1
         parsed_message["ttl"] = (int.from_bytes(parsed_message["ttl"], "big") - 1).to_bytes(1, "big")
         new_packet = create_packet(parsed_message)
-        dgram_socket.sendto(new_packet, (next_hop_ip, next_hop_port))
-        print(f"Redirigiendo paquete {new_packet} con destino final {destination_address} hacia {next_hop}")
+
+        #Ahora como tenemos mtu vemos si es que es necesario fragmentar
+        fragments = fragment_IP_packet(new_packet,mtu)
+
+        for fragment in fragments:
+            dgram_socket.sendto(fragment, (next_hop_ip, next_hop_port))
+            print(f"Redirigiendo paquete {fragment} con destino final {destination_address} hacia {next_hop}")
     else:
         print(f"No hay rutas hacia {destination_address} para el paquete con mensaje: {parsed_message['message']}")
 
