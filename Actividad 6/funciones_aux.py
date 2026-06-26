@@ -9,19 +9,19 @@ def parse_packet(IP_packet: bytes) -> dict:
     ttl_bytes = IP_packet[6:7]
     
     #Extraer el id del paquete
-    id_bytes = IP_packet[7:8]
+    id_bytes = IP_packet[7:9]
 
     #Extraer el offset del paquete
-    offset_bytes = IP_packet[8:10]
+    offset_bytes = IP_packet[9:11]
 
     #Extraer el tamaño del paquete
-    size_bytes = IP_packet[10:14]
+    size_bytes = IP_packet[11:15]
 
     #Extraer el flag del paquete
-    flag_bytes = IP_packet[14:15]
+    flag_bytes = IP_packet[15:16]
 
     #Extraer el mensaje del paquete
-    message_bytes = IP_packet[15:]
+    message_bytes = IP_packet[16:]
 
     #Lo pasamos a una estructura de tipo diccionario, con la ip de destino en string, el puerto de destino como entero y el mensaje como string
     packet_info = {

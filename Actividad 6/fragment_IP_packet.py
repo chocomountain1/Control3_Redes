@@ -5,8 +5,8 @@ def fragment_IP_packet(IP_packet: bytes, mtu: int):
     if size_ip_packet <= mtu:
         return [IP_packet]
     parsed_packet = parse_packet(IP_packet)
-    headers = IP_packet[:15]
-    payload = IP_packet[15:]
+    headers = IP_packet[:16]
+    payload = IP_packet[16:]
     largo_fragmentos = mtu - len(headers)
     fragments = []
     #Este for es el encargado de generar los fragmentos con los headers actualizados
@@ -28,7 +28,7 @@ def fragment_IP_packet(IP_packet: bytes, mtu: int):
         "ttl": parsed_packet["ttl"],
         "id": parsed_packet["id"],
         "offset": new_offset,
-        "size": new_size,
+        "size": parsed_packet["size"],
         "flag": new_flag,
         "message": trozo
         }

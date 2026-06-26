@@ -42,7 +42,7 @@ while True:
         id = int.from_bytes(parsed_message["id"], "big")
         if id not in fragmentos:
             fragmentos[id] = []
-        fragmentos[id].append(fragment)
+        fragmentos[id].append(create_packet(parsed_message))
 
         packet = reassemble_IP_packet(fragmentos[id])
 

@@ -20,7 +20,7 @@ for i in IP_router_final.split("."):
 
 puerto_bytes = puerto_router_final.to_bytes(2, "big")
 ttl_bytes = ttl.to_bytes(1, "big")
-id_bytes = id.to_bytes(1, "big")
+id_bytes = id.to_bytes(2, "big")
 offset_bytes = offset.to_bytes(2, "big")
 tamaño_bytes = tamaño.to_bytes(4, "big")
 flag_bytes = flag.to_bytes(1, "big")
