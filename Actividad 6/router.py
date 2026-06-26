@@ -48,7 +48,6 @@ while True:
 
         if packet is not None:
             print(parse_packet(packet)["message"])
-            del fragmentos[id]
         continue
     
     #Si no entonces chequeamos las rutas para ver si hay una ruta que coincida con la dirección de destino del mensaje
